@@ -33,12 +33,12 @@ bool PieceKing::updatePosition(short rank, short file, std::vector<Piece *> &vec
   return Piece::updatePosition(rank, file, vecPiece);
 }
 
-bool PieceKing::checked(std::vector<Piece *> &vecPiece) {
-  return (checkedByPawn(vecPiece) ||
-          checkedByCannon(vecPiece) ||
-          checkedByHorse(vecPiece) ||
-          checkedByRook(vecPiece) ||
-          checkedByKing(vecPiece));
+bool PieceKing::checked(Chess &chess) {
+  return (checkedByPawn(chess) ||
+          checkedByCannon(chess) ||
+          checkedByHorse(chess) ||
+          checkedByRook(chess) ||
+          checkedByKing(chess));
 }
 
 /**
@@ -48,59 +48,115 @@ bool PieceKing::checked(std::vector<Piece *> &vecPiece) {
  * @param vecPiece
  * @return
  */
-bool PieceKing::checkedByKing(std::vector<Piece *> &vecPiece) {
-  bool meetOnSameFile = false;
-  for (auto pPiece: vecPiece) {
-    if (pPiece->state() == EnumState::dead)
-      continue;
+bool PieceKing::checkedByKing(Chess &chess) {
+  short rank = m_curPosition.rank();
+  if (rank < 3) {
+    for (short i = rank + 1; i < 10; ++i) {
+      Piece *pPiece = chess.getPiece(i, m_curPosition.file());
+      if (pPiece == nullptr)
+        continue;
 
-    Position pos = pPiece->curPosition();
-    if (m_curPosition == pos)
-      continue;
+      if (pPiece->state() != EnumState::live)
+        continue;
 
-    if (m_curPosition.file() != pos.file())
-      continue;
-
-    if (pPiece->role() != EnumIdentity::king)
-      return false;
-
-    meetOnSameFile = true;
+      if (pPiece->role() != EnumIdentity::king)
+        return false;
+      else
+        return true;
+    }
   }
+  if (rank > 6) {
+    for (short i = 1; i < rank; ++i) {
+      Piece *pPiece = chess.getPiece(rank - i, m_curPosition.file());
+      if (pPiece == nullptr)
+        continue;
 
-  if (meetOnSameFile)
-    return true;
+      if (pPiece->state() != EnumState::live)
+        continue;
 
-  return false;
-}
-
-bool PieceKing::checkedByRook(std::vector<Piece *> &vecPiece) {
-  for (auto pPiece: vecPiece) {
-    if (pPiece->state() == EnumState::dead)
-      continue;
-
-    if (pPiece == this)
-      continue;
-
-    Position pos = pPiece->curPosition();
-    if (m_curPosition.file() != pos.file() && m_curPosition.rank() != pos.rank())
-      continue;
-
-    if (pPiece->camp() != m_eCamp && pPiece->role() == EnumIdentity::rook) {
-
+      if (pPiece->role() != EnumIdentity::king)
+        return false;
+      else
+        return true;
     }
   }
   return false;
 }
 
-bool PieceKing::checkedByPawn(std::vector<Piece *> &vecPiece) {
+
+bool PieceKing::checkedByRook(Chess &chess) {
+  short rank = m_curPosition.rank();
+  short file = m_curPosition.file();
+
+  for (short i = 0; i < rank; ++i) {
+    Piece *pPiece = chess.getPiece(rank - i - 1, file);
+    if (pPiece == nullptr)
+      continue;
+
+    if (pPiece->state() != EnumState::live)
+      continue;
+
+    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
+      return true;
+    } else
+      return false;
+  }
+
+  for (short i = rank; i < 10; ++i) {
+    Piece *pPiece = chess.getPiece(i + 1, file);
+    if (pPiece == nullptr)
+      continue;
+
+    if (pPiece->state() != EnumState::live)
+      continue;
+
+    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
+      return true;
+    } else
+      return false;
+  }
+
+  for (short i = 0; i < file; ++i) {
+    Piece *pPiece = chess.getPiece(rank, file - i - 1);
+    if (pPiece == nullptr)
+      continue;
+
+    if (pPiece->state() != EnumState::live)
+      continue;
+
+    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
+      return true;
+    } else
+      return false;
+  }
+
+  for (short i = file; i < 9; ++i) {
+    Piece *pPiece = chess.getPiece(rank, i + 1);
+    if (pPiece == nullptr)
+      continue;
+
+    if (pPiece->state() != EnumState::live)
+      continue;
+
+    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
+      return true;
+    } else
+      return false;
+  }
+
+  return false;
+}
+
+bool PieceKing::checkedByPawn(Chess &chess) {
+
   return false;
 }
 
 
-bool PieceKing::checkedByCannon(std::vector<Piece *> &vecPiece) {
+bool PieceKing::checkedByCannon(Chess &chess) {
   return false;
 }
 
-bool PieceKing::checkedByHorse(std::vector<Piece *> &vecPiece) {
+bool PieceKing::checkedByHorse(Chess &chess) {
   return false;
 }

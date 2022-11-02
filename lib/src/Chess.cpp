@@ -109,7 +109,7 @@ Chess::~Chess() {
 
 Piece *Chess::getPiece(short rank, short file) {
   std::cout << __func__ << std::endl;
-  if (rank < 0 || rank > 9 || file < 0 || file > 8)
+  if (rank < 0 || rank >= 10 || file < 0 || file >= 9)
     return nullptr;
 
   for (auto pPiece: m_vecPiece) {

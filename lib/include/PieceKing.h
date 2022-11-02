@@ -6,6 +6,8 @@
 #define CHINESE_CHESS_PIECE_KING_H
 
 #include "Piece.h"
+#include "Chess.h"
+
 
 class PieceKing : public Piece {
 public:
@@ -15,18 +17,18 @@ public:
 
   bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) override;
 
-  bool checked(std::vector<Piece *> &vecPiece);
+  bool checked(Chess &chess);
 
 private:
-  bool checkedByPawn(std::vector<Piece *> &vecPiece);
+  bool checkedByPawn(Chess &chess);
 
-  bool checkedByCannon(std::vector<Piece *> &vecPiece);
+  bool checkedByCannon(Chess &chess);
 
-  bool checkedByHorse(std::vector<Piece *> &vecPiece);
+  bool checkedByHorse(Chess &chess);
 
-  bool checkedByRook(std::vector<Piece *> &vecPiece);
+  bool checkedByRook(Chess &chess);
 
-  bool checkedByKing(std::vector<Piece *> &vecPiece);
+  bool checkedByKing(Chess &chess);
 };
 
 
