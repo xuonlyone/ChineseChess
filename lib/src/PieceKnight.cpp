@@ -5,9 +5,9 @@
 #include <cmath>
 #include "../include/PieceKnight.h"
 
-PieceKnight::PieceKnight(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position& position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "傌" : "馬");
+PieceKnight::PieceKnight(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed ? "傌" : "馬");
 }
 
 
@@ -27,7 +27,7 @@ bool PieceKnight::updatePosition(short rank, short file, std::vector<Piece *> &v
   if (!((val1 + val2 == 3) && (val1 != 0) && (val2 != 0)))
     return false;
 
-  //consider the lame horse
+  //consider the lame knight
   if (val1 > val2) {
     auto lame = (rank + m_curPosition.rank()) / 2;
     for (auto pPiece: vecPiece) {
@@ -51,4 +51,29 @@ bool PieceKnight::updatePosition(short rank, short file, std::vector<Piece *> &v
   }
 
   return Piece::updatePosition(rank, file, vecPiece);
+}
+
+bool PieceKnight::checking(Chess &chess) {
+  Piece *pPieceKing = chess.getKing(!m_bCampRed);
+  Position posKing = pPieceKing->curPosition();
+
+  unsigned val1 = abs(posKing.rank() - m_curPosition.rank());
+  unsigned val2 = abs(posKing.file() - m_curPosition.file());
+
+  if (!((val1 + val2 == 3) && (val1 != 0) && (val2 != 0)))
+    return false;
+
+  //consider the lame knight
+  if (val1 > val2) {
+    auto lame = (posKing.rank() + m_curPosition.rank()) / 2;
+    Piece *pPieceLame = chess.getPiece(lame, m_curPosition.file());
+    if (pPieceLame != nullptr)
+      return false;
+  } else {
+    auto lame = (posKing.file() + m_curPosition.file()) / 2;
+    Piece *pPieceLame = chess.getPiece(m_curPosition.rank(), lame);
+    if (pPieceLame != nullptr)
+      return false;
+  }
+  return true;
 }

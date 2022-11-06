@@ -6,9 +6,9 @@
 #include <iostream>
 #include "../include/PiecePawn.h"
 
-PiecePawn::PiecePawn(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "兵" : "卒");
+PiecePawn::PiecePawn(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed ? "兵" : "卒");
 }
 
 
@@ -33,7 +33,7 @@ bool PiecePawn::updatePosition(short rank, short file, std::vector<Piece *> &vec
 
   // The pawn can only step forward. After crossing the river, it can step forward or on both sides, one step at a time.
   if (abs(rank - m_initPosition.rank()) <= 1) {
-    std::cout<<"crossed the river"<<m_initPosition.rank()<<std::endl;
+    std::cout << "crossed the river" << m_initPosition.rank() << std::endl;
     if (file != m_curPosition.file() || file != m_initPosition.file())
       return false;
   } else {
@@ -42,4 +42,23 @@ bool PiecePawn::updatePosition(short rank, short file, std::vector<Piece *> &vec
   }
 
   return Piece::updatePosition(rank, file, vecPiece);
+}
+
+
+bool PiecePawn::checking(Chess &chess) {
+  Piece *pPieceKing = chess.getKing(!m_bCampRed);
+  Position posKing = pPieceKing->curPosition();
+
+  if (abs(posKing.rank() - m_curPosition.rank() > 1) || abs(posKing.file() - m_curPosition.file() > 1))
+    return false;
+
+  if (m_initPosition.rank() == 3 && m_curPosition.rank() > posKing.rank()) {
+    return false;
+  }
+
+  if (m_initPosition.rank() == 6 && m_curPosition.rank() < posKing.rank()) {
+    return false;
+  }
+
+  return true;
 }

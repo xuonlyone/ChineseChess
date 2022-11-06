@@ -9,11 +9,13 @@
 
 class PieceCannon : public Piece {
 public:
-  PieceCannon(EnumCamp eCamp, EnumIdentity eIdentity, const Position& position);
+  PieceCannon(bool bCampRed, EnumIdentity eIdentity, const Position& position);
 
   ~PieceCannon() override = default;
 
   bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) override;
+
+  bool checking(Chess &chess) override;
 };
 
 

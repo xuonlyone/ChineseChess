@@ -9,11 +9,13 @@
 class PieceKnight: public Piece{
 
 public:
-  PieceKnight(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position& position);
+  PieceKnight(bool bCampRed, enum EnumIdentity eIdentity, const Position& position);
 
   ~PieceKnight() override = default;
 
   bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) override;
+
+  bool checking(Chess &chess) override;
 };
 
 

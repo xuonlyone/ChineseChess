@@ -5,9 +5,9 @@
 #include <cmath>
 #include "../include/PieceMinister.h"
 
-PieceMinister::PieceMinister(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position& position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "相" : "象");
+PieceMinister::PieceMinister(bool bCampRed, enum EnumIdentity eIdentity, const Position& position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed ? "相" : "象");
 }
 
 

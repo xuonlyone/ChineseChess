@@ -6,9 +6,9 @@
 #include "../include/PieceGuards.h"
 
 
-PieceGuards::PieceGuards(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "仕" : "士");
+PieceGuards::PieceGuards(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed? "仕" : "士");
 }
 
 

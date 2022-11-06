@@ -9,7 +9,7 @@
 
 class PieceMinister : public Piece {
 public:
-  PieceMinister(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position& position);
+  PieceMinister(bool bCampRed, enum EnumIdentity eIdentity, const Position& position);
 
   ~PieceMinister() override = default;
 

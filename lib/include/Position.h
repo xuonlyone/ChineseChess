@@ -16,6 +16,8 @@ public:
 
   bool operator==(const Position &p) const;
 
+  Position operator+(const Position &p) const;
+
   short rank() const;
 
   short file() const;

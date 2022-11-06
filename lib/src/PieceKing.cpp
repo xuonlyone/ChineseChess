@@ -6,9 +6,9 @@
 #include <iostream>
 #include "../include/PieceKing.h"
 
-PieceKing::PieceKing(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "帥" : "將");
+PieceKing::PieceKing(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed ? "帥" : "將");
   std::cout << m_name << std::endl;
 }
 
@@ -33,13 +33,15 @@ bool PieceKing::updatePosition(short rank, short file, std::vector<Piece *> &vec
   return Piece::updatePosition(rank, file, vecPiece);
 }
 
-bool PieceKing::checked(Chess &chess) {
-  return (checkedByPawn(chess) ||
-          checkedByCannon(chess) ||
-          checkedByHorse(chess) ||
-          checkedByRook(chess) ||
-          checkedByKing(chess));
-}
+
+
+//bool PieceKing::checked(Chess &chess) {
+//  return (checkedByPawn(chess) ||
+//          checkedByCannon(chess) ||
+//          checkedByKnight(chess) ||
+//          checkedByRook(chess) ||
+//          checkedByKing(chess));
+//}
 
 /**
  * The two Kings in the board must never be on the same file (vertical line)
@@ -48,115 +50,281 @@ bool PieceKing::checked(Chess &chess) {
  * @param vecPiece
  * @return
  */
-bool PieceKing::checkedByKing(Chess &chess) {
-  short rank = m_curPosition.rank();
-  if (rank < 3) {
-    for (short i = rank + 1; i < 10; ++i) {
-      Piece *pPiece = chess.getPiece(i, m_curPosition.file());
-      if (pPiece == nullptr)
-        continue;
 
-      if (pPiece->state() != EnumState::live)
-        continue;
+bool PieceKing::checking(Chess &chess) {
+  Piece *pPieceKing = chess.getKing(!m_bCampRed);
+  Position posKing = pPieceKing->curPosition();
 
-      if (pPiece->role() != EnumIdentity::king)
-        return false;
-      else
-        return true;
-    }
-  }
-  if (rank > 6) {
-    for (short i = 1; i < rank; ++i) {
-      Piece *pPiece = chess.getPiece(rank - i, m_curPosition.file());
-      if (pPiece == nullptr)
-        continue;
+  if (posKing.file() != m_curPosition.file())
+    return false;
 
-      if (pPiece->state() != EnumState::live)
-        continue;
+  short maxPos = std::max(posKing.rank(), m_curPosition.rank());
+  short minPos = std::min(posKing.rank(), m_curPosition.rank());
 
-      if (pPiece->role() != EnumIdentity::king)
-        return false;
-      else
-        return true;
-    }
-  }
-  return false;
-}
-
-
-bool PieceKing::checkedByRook(Chess &chess) {
-  short rank = m_curPosition.rank();
-  short file = m_curPosition.file();
-
-  for (short i = 0; i < rank; ++i) {
-    Piece *pPiece = chess.getPiece(rank - i - 1, file);
-    if (pPiece == nullptr)
-      continue;
-
-    if (pPiece->state() != EnumState::live)
-      continue;
-
-    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
-      return true;
-    } else
+  for (short i = minPos + 1; i < maxPos; ++i) {
+    Piece *pPiece = chess.getPiece(posKing.rank(), i);
+    if (pPiece != nullptr)
       return false;
   }
 
-  for (short i = rank; i < 10; ++i) {
-    Piece *pPiece = chess.getPiece(i + 1, file);
-    if (pPiece == nullptr)
-      continue;
-
-    if (pPiece->state() != EnumState::live)
-      continue;
-
-    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
-      return true;
-    } else
-      return false;
-  }
-
-  for (short i = 0; i < file; ++i) {
-    Piece *pPiece = chess.getPiece(rank, file - i - 1);
-    if (pPiece == nullptr)
-      continue;
-
-    if (pPiece->state() != EnumState::live)
-      continue;
-
-    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
-      return true;
-    } else
-      return false;
-  }
-
-  for (short i = file; i < 9; ++i) {
-    Piece *pPiece = chess.getPiece(rank, i + 1);
-    if (pPiece == nullptr)
-      continue;
-
-    if (pPiece->state() != EnumState::live)
-      continue;
-
-    if (pPiece->role() == EnumIdentity::rook && pPiece->camp() == m_eCamp) {
-      return true;
-    } else
-      return false;
-  }
-
-  return false;
+  return true;
 }
 
-bool PieceKing::checkedByPawn(Chess &chess) {
-
-  return false;
-}
-
-
-bool PieceKing::checkedByCannon(Chess &chess) {
-  return false;
-}
-
-bool PieceKing::checkedByHorse(Chess &chess) {
-  return false;
-}
+//bool PieceKing::checkedByKing(Chess &chess) {
+//  short rank = m_curPosition.rank();
+//  if (rank < 3) {
+//    for (short i = rank + 1; i < 10; ++i) {
+//      Piece *pPiece = chess.getPiece(i, m_curPosition.file());
+//      if (pPiece == nullptr)
+//        continue;
+//
+//      if (pPiece->state() != EnumState::live)
+//        continue;
+//
+//      if (pPiece->role() != EnumIdentity::king)
+//        return false;
+//      else
+//        return true;
+//    }
+//  }
+//  if (rank > 6) {
+//    for (short i = 1; i < rank; ++i) {
+//      Piece *pPiece = chess.getPiece(rank - i, m_curPosition.file());
+//      if (pPiece == nullptr)
+//        continue;
+//
+//      if (pPiece->state() != EnumState::live)
+//        continue;
+//
+//      if (pPiece->role() != EnumIdentity::king)
+//        return false;
+//      else
+//        return true;
+//    }
+//  }
+//  return false;
+//}
+//
+//
+//bool PieceKing::checkedByRook(Chess &chess) {
+//  short rank = m_curPosition.rank();
+//  short file = m_curPosition.file();
+//
+//  for (short i = 0; i < rank; ++i) {
+//    Piece *pPiece = chess.getPiece(rank - i - 1, file);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  for (short i = rank; i < 10; ++i) {
+//    Piece *pPiece = chess.getPiece(i + 1, file);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  for (short i = 0; i < file; ++i) {
+//    Piece *pPiece = chess.getPiece(rank, file - i - 1);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  for (short i = file; i < 9; ++i) {
+//    Piece *pPiece = chess.getPiece(rank, i + 1);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  return false;
+//}
+//
+//
+//bool PieceKing::checkedByCannon(Chess &chess) {
+//  short rank = m_curPosition.rank();
+//  short file = m_curPosition.file();
+//
+//  int count = 0;
+//  for (short i = 0; i < rank; ++i) {
+//    Piece *pPiece = chess.getPiece(rank - i - 1, file);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (count == 0) {
+//      ++count;
+//      continue;
+//    }
+//
+//    if (pPiece->role() == EnumIdentity::cannon && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  count = 0;
+//  for (short i = rank; i < 10; ++i) {
+//    Piece *pPiece = chess.getPiece(i + 1, file);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (count == 0) {
+//      ++count;
+//      continue;
+//    }
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  count = 0;
+//  for (short i = 0; i < file; ++i) {
+//    Piece *pPiece = chess.getPiece(rank, file - i - 1);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (count == 0) {
+//      ++count;
+//      continue;
+//    }
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  count = 0;
+//  for (short i = file; i < 9; ++i) {
+//    Piece *pPiece = chess.getPiece(rank, i + 1);
+//    if (pPiece == nullptr)
+//      continue;
+//
+//    if (pPiece->state() != EnumState::live)
+//      continue;
+//
+//    if (count == 0) {
+//      ++count;
+//      continue;
+//    }
+//
+//    if (pPiece->role() == EnumIdentity::rook && pPiece->campRed() == m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//
+//  return false;
+//}
+//
+//
+//bool PieceKing::checkedByPawn(Chess &chess) {
+//  short rank = m_curPosition.rank();
+//  short file = m_curPosition.file();
+//  Piece *pPiece = chess.getPiece(rank, file + 1);
+//  if (pPiece != nullptr &&
+//      pPiece->role() == EnumIdentity::pawn &&
+//      pPiece->state() == EnumState::live &&
+//      pPiece->campRed() != m_bCampRed) {
+//    return true;
+//  }
+//
+//  pPiece = chess.getPiece(rank, file - 1);
+//  if (pPiece != nullptr &&
+//      pPiece->role() == EnumIdentity::pawn &&
+//      pPiece->state() == EnumState::live &&
+//      pPiece->campRed() != m_bCampRed) {
+//    return true;
+//  }
+//
+//  if (rank < 3) {
+//    pPiece = chess.getPiece(rank + 1, file);
+//    if (pPiece != nullptr &&
+//        pPiece->role() == EnumIdentity::pawn &&
+//        pPiece->state() == EnumState::live &&
+//        pPiece->campRed() != m_bCampRed) {
+//      return true;
+//    }
+//  } else if (rank > 6) {
+//    pPiece = chess.getPiece(rank - 1, file);
+//    if (pPiece != nullptr &&
+//        pPiece->role() == EnumIdentity::pawn &&
+//        pPiece->state() == EnumState::live &&
+//        pPiece->campRed() != m_bCampRed) {
+//      return true;
+//    } else
+//      return false;
+//  }
+//  return false;
+//}
+//
+//
+//bool PieceKing::checkedByKnight(Chess &chess) {
+//  short rank = m_curPosition.rank();
+//  short file = m_curPosition.file();
+//  Position posCheck[] = {{-1, -2},
+//                         {-1, 2},
+//                         {1,  -2},
+//                         {1,  2},
+//                         {-2, -1},
+//                         {-2, 1},
+//                         {2,  -1},
+//                         {2,  1}
+//  };
+//  Position posLame[] = {{-1, -1},
+//                        {-1, 1},
+//                        {1,  -1},
+//                        {1,  1}
+//  };
+//
+//  for (int i = 0; i < 8; ++i) {
+//    Piece *pPiece = chess.getPiece(m_curPosition + posCheck[i]);
+//    if (pPiece != nullptr &&
+//        pPiece->role() == EnumIdentity::knight &&
+//        pPiece->state() == EnumState::live &&
+//        pPiece->campRed() != m_bCampRed &&
+//        chess.getPiece(m_curPosition + posLame[i % 4]) == nullptr)
+//      return true;
+//  }
+//  return false;
+//}

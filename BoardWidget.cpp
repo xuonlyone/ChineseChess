@@ -31,7 +31,7 @@ BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
     font.setPointSize(32);
     QPainter *painter = new QPainter(&image);
     painter->setFont(font);
-    if (pPiece->camp() == EnumCamp::red)
+    if (pPiece->campRed())
       painter->setPen(Qt::red);
     painter->drawText(image.rect(), Qt::AlignCenter, QString::fromLocal8Bit(pPiece->name()));
     QLabel *imageLabel = new QLabel(this);
@@ -41,20 +41,6 @@ BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
                      m_origin + pos.rank() * m_spacing - image.rect().center().y());
 
     std::cout << "piece" << pPiece->name() << " " << imageLabel << std::endl;
-
-//    QLabel *pieceIcon1 = new QLabel(this);
-//    pieceIcon1->setPixmap(QPixmap(":/res/piece.png"));
-//    QFont font;
-//    font.setFamilies({QString::fromUtf8("\351\232\266\344\271\246")});
-//    font.setPointSize(40);
-//    pieceIcon1->setFont(font);
-//    pieceIcon1->setText(QString::fromLocal8Bit(pPiece->name()));
-//
-//    pieceIcon1->setMaximumSize(100, 100);
-//
-//    pieceIcon1->move(m_origin + pos.file() * m_spacing, m_origin + pos.rank() * m_spacing);
-//    pieceIcon1->show();
-//    pieceIcon1->setAttribute(Qt::WA_DeleteOnClose);
   }
 
 
@@ -101,15 +87,6 @@ void BoardWidget::paintEvent(QPaintEvent *) {
   paint.drawText(rectChuHe, QString::fromLocal8Bit("楚 河"), QTextOption(Qt::AlignVCenter));
   paint.drawText(rectHanJie, QString::fromLocal8Bit("漢 界"), QTextOption(Qt::AlignVCenter));
 
-//  //*******************绘画棋子*******************
-//  for(int i = 0; i < 32; i++)
-//    drawChessPieces(painter, i);
-//  //绘制上次移动棋子的起止位置
-//  if(m_bIsShowStep)
-//    drawLastStep(painter,m_ChessSteps);
-//
-//  //绘制文本棋谱
-//  drawTextStep();
 }
 
 BoardWidget::~BoardWidget() = default;
@@ -155,7 +132,7 @@ void BoardWidget::dropEvent(QDropEvent *event) {
     int fileDst = (event->position().toPoint().x() - m_origin + pixmap.rect().center().x()) / m_spacing;
     std::cout << "point origin " << rankSrc << ", " << fileSrc << std::endl;
     std::cout << "point target " << rankDst << ", " << fileDst << std::endl;
-    bool bMove = m_Chess.MovePiece(rankSrc, fileSrc, rankDst, fileDst);
+    bool bMove = m_Chess.movePiece(rankSrc, fileSrc, rankDst, fileDst);
     if (bMove) {
       auto *child = dynamic_cast<QLabel *>(childAt(m_origin + fileDst * m_spacing,
                                                    m_origin + rankDst * m_spacing));
@@ -171,6 +148,8 @@ void BoardWidget::dropEvent(QDropEvent *event) {
       newIcon->show();
       newIcon->setAttribute(Qt::WA_DeleteOnClose);
     }
+
+
 
     if (event->source() == this) {
       if (bMove) {

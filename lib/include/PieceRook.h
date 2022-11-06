@@ -9,12 +9,13 @@
 
 class PieceRook : public Piece {
 public:
-  PieceRook(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position& position);
+  PieceRook(bool bCampRed, enum EnumIdentity eIdentity, const Position& position);
 
   ~PieceRook() override = default;
 
   bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) override;
 
+  bool checking(Chess &chess) override;
 };
 
 

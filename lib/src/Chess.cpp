@@ -47,13 +47,13 @@ Chess::Chess() {
                                             {6, 6},
                                             {6, 8}};
   const EnumIdentity identityArr[PIECE_COUNT] = {EnumIdentity::rook,
-                                                 EnumIdentity::horse,
-                                                 EnumIdentity::elephant,
+                                                 EnumIdentity::knight,
+                                                 EnumIdentity::minister,
                                                  EnumIdentity::adviser,
                                                  EnumIdentity::king,
                                                  EnumIdentity::adviser,
-                                                 EnumIdentity::elephant,
-                                                 EnumIdentity::horse,
+                                                 EnumIdentity::minister,
+                                                 EnumIdentity::knight,
                                                  EnumIdentity::rook,
                                                  EnumIdentity::cannon,
                                                  EnumIdentity::cannon,
@@ -64,31 +64,31 @@ Chess::Chess() {
                                                  EnumIdentity::pawn};
 
   for (int i = 0; i < 2; ++i) {
-    auto eCamp = static_cast<EnumCamp>(i + 1);
+    bool bCampRed = i;
 
     for (int j = 0; j < PIECE_COUNT; ++j) {
       Piece *pPiece = nullptr;
       switch (identityArr[j]) {
         case EnumIdentity::rook:
-          pPiece = new PieceRook(eCamp, EnumIdentity::rook, posArr[i * PIECE_COUNT + j]);
+          pPiece = new PieceRook(bCampRed, EnumIdentity::rook, posArr[i * PIECE_COUNT + j]);
           break;
-        case EnumIdentity::horse:
-          pPiece = new PieceKnight(eCamp, EnumIdentity::horse, posArr[i * PIECE_COUNT + j]);
+        case EnumIdentity::knight:
+          pPiece = new PieceKnight(bCampRed, EnumIdentity::knight, posArr[i * PIECE_COUNT + j]);
           break;
-        case EnumIdentity::elephant:
-          pPiece = new PieceMinister(eCamp, EnumIdentity::elephant, posArr[i * PIECE_COUNT + j]);
+        case EnumIdentity::minister:
+          pPiece = new PieceMinister(bCampRed, EnumIdentity::minister, posArr[i * PIECE_COUNT + j]);
           break;
         case EnumIdentity::adviser:
-          pPiece = new PieceGuards(eCamp, EnumIdentity::adviser, posArr[i * PIECE_COUNT + j]);
+          pPiece = new PieceGuards(bCampRed, EnumIdentity::adviser, posArr[i * PIECE_COUNT + j]);
           break;
         case EnumIdentity::king:
-          pPiece = new PieceKing(eCamp, EnumIdentity::king, posArr[i * PIECE_COUNT + j]);
+          pPiece = new PieceKing(bCampRed, EnumIdentity::king, posArr[i * PIECE_COUNT + j]);
           break;
         case EnumIdentity::cannon:
-          pPiece = new PieceCannon(eCamp, EnumIdentity::cannon, posArr[i * PIECE_COUNT + j]);
+          pPiece = new PieceCannon(bCampRed, EnumIdentity::cannon, posArr[i * PIECE_COUNT + j]);
           break;
         case EnumIdentity::pawn:
-          pPiece = new PiecePawn(eCamp, EnumIdentity::cannon, posArr[i * PIECE_COUNT + j]);
+          pPiece = new PiecePawn(bCampRed, EnumIdentity::cannon, posArr[i * PIECE_COUNT + j]);
           break;
         case EnumIdentity::unknown:
         default:
@@ -133,6 +133,10 @@ Piece *Chess::getPiece(short rank, short file) {
   return nullptr;
 }
 
+Piece *Chess::getPiece(const Position &pos) {
+  return getPiece(pos.rank(), pos.file());
+}
+
 
 void Chess::reset() {
   for (auto pPiece : m_vecPiece) {
@@ -146,10 +150,10 @@ void Chess::reset() {
 }
 
 
-bool Chess::MovePiece(short rankSrc, short fileSrc, short rankDst, short fileDst) {
+bool Chess::movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst) {
   Piece *pPiece = getPiece(rankSrc, fileSrc);
-  std::cout << "name: " << pPiece->name() << " camp: " << (int) pPiece->camp() << " " << m_redTurn << std::endl;
-  if (((pPiece->camp() == EnumCamp::red) ^ m_redTurn))
+  std::cout << "name: " << pPiece->name() << " campRed: " << (int) pPiece->campRed() << " " << m_redTurn << std::endl;
+  if (pPiece->campRed() ^ m_redTurn)
     return false;
 
   bool ret = pPiece->updatePosition(rankDst, fileDst, m_vecPiece);
@@ -159,7 +163,31 @@ bool Chess::MovePiece(short rankSrc, short fileSrc, short rankDst, short fileDst
   return ret;
 }
 
+
 std::vector<Piece *> &Chess::getAllPieces() {
   return m_vecPiece;
 }
 
+
+Piece *Chess::getKing(bool bCampRed) {
+  for (auto pPiece: m_vecPiece) {
+    if (pPiece->campRed() == bCampRed && pPiece->role() == EnumIdentity::king)
+      return pPiece;
+  }
+  return nullptr;
+}
+
+
+bool Chess::Checking() {
+  bool bCampRed = m_redTurn;
+  if (m_redTurn) {
+
+    for (auto pPiece : m_vecPiece) {
+      if (pPiece->role() != EnumIdentity::king || pPiece->campRed() != bCampRed)
+        continue;
+
+
+    }
+  }
+  return false;
+}

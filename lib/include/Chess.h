@@ -9,6 +9,8 @@
 #include "Board.h"
 #include "Piece.h"
 
+class Piece;
+
 class Chess {
 public:
   Chess();
@@ -17,9 +19,15 @@ public:
 
   void reset();
 
-  bool MovePiece(short rankSrc, short fileSrc, short rankDst, short fileDst);
+  bool movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst);
 
   Piece *getPiece(short rank, short file);
+
+  Piece *getPiece(const Position& pos);
+
+  Piece *getKing(bool bCampRed);
+
+  bool Checking();
 
   std::vector<Piece *> &getAllPieces();
 

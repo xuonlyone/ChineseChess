@@ -4,9 +4,9 @@
 
 #include "../include/PieceCannon.h"
 
-PieceCannon::PieceCannon(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position)
-    : Piece(eCamp, eIdentity, position) {
-  m_name = (m_eCamp == EnumCamp::red ? "炮" : "砲");
+PieceCannon::PieceCannon(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : Piece(bCampRed, eIdentity, position) {
+  m_name = (m_bCampRed ? "炮" : "砲");
 }
 
 /**
@@ -45,7 +45,7 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
       }
 
       if (pos.file() == file) {
-        if (pPiece->camp() == m_eCamp) {
+        if (pPiece->campRed() == m_bCampRed) {
           return false;
         } else {
           hasEnemy = true;
@@ -61,7 +61,7 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
       }
 
       if (pos.rank() == rank) {
-        if (pPiece->camp() == m_eCamp) {
+        if (pPiece->campRed() == m_bCampRed) {
           return false;
         } else {
           hasEnemy = true;
@@ -82,4 +82,40 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
   } else {
     return false;
   }
+}
+
+
+bool PieceCannon::checking(Chess &chess) {
+  Piece *pPieceKing = chess.getKing(!m_bCampRed);
+  Position posKing = pPieceKing->curPosition();
+
+  if (posKing.rank() == m_curPosition.rank()) {
+    short maxPos = std::max(posKing.file(), m_curPosition.file());
+    short minPos = std::min(posKing.file(), m_curPosition.file());
+
+    int count = 0;
+    for (short i = minPos + 1; i < maxPos; ++i) {
+      Piece *pPiece = chess.getPiece(posKing.rank(), i);
+      if (pPiece != nullptr)
+        ++count;
+    }
+    if (count != 1)
+      return false;
+  }
+
+  if (posKing.file() == m_curPosition.file()) {
+    short maxPos = std::max(posKing.rank(), m_curPosition.rank());
+    short minPos = std::min(posKing.rank(), m_curPosition.rank());
+
+    int count = 0;
+    for (short i = minPos + 1; i < maxPos; ++i) {
+      Piece *pPiece = chess.getPiece(i, posKing.file());
+      if (pPiece != nullptr)
+        ++count;
+    }
+    if (count != 1)
+      return false;
+  }
+
+  return true;
 }

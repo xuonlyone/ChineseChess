@@ -5,20 +5,16 @@
 #ifndef CHINESE_CHESS_PIECE_H
 #define CHINESE_CHESS_PIECE_H
 
-#include "Position.h"
 #include <vector>
+#include "Position.h"
+#include "Chess.h"
 
-enum class EnumCamp {
-  unknown = 0,
-  red,
-  black,
-};
 
 enum class EnumIdentity {
   unknown = 0,
   rook, //车
-  horse,  //马
-  elephant, //象相
+  knight,  //马
+  minister, //象相
   adviser,  //士仕
   king, //将帅
   cannon, //炮
@@ -32,9 +28,11 @@ enum class EnumState {
   dead,
 };
 
+class Chess;
+
 class Piece {
 public:
-  Piece(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position);
+  Piece(bool bCampRed, enum EnumIdentity eIdentity, const Position &position);
 
   Piece();
 
@@ -42,7 +40,7 @@ public:
 
   bool operator==(const Piece &p) const;
 
-  void setCamp(enum EnumCamp eCamp);
+  void setCampRed(bool bCampRed);
 
   void setRole(enum EnumIdentity eIdentity);
 
@@ -58,7 +56,7 @@ public:
 
   const char *name() const;
 
-  enum EnumCamp camp() const;
+  bool campRed() const;
 
   enum EnumIdentity role() const;
 
@@ -66,9 +64,11 @@ public:
 
   Position curPosition() const;
 
+  virtual bool checking(Chess &chess);
+
 
 protected:
-  enum EnumCamp m_eCamp;
+  bool m_bCampRed;
   enum EnumIdentity m_eIdentity;
   enum EnumState m_eState;
   Position m_initPosition;

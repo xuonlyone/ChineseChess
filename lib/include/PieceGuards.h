@@ -11,7 +11,7 @@
 class PieceGuards : public Piece{
 
 public:
-  PieceGuards(EnumCamp eCamp, EnumIdentity eIdentity, const Position& position);
+  PieceGuards(bool bCampRed, EnumIdentity eIdentity, const Position& position);
 
   ~PieceGuards() override = default;
 

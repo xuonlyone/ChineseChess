@@ -4,14 +4,14 @@
 
 #include "../include/Piece.h"
 
-Piece::Piece(enum EnumCamp eCamp, enum EnumIdentity eIdentity, const Position &position)
-    : m_eCamp(eCamp), m_eIdentity(eIdentity), m_curPosition(position), m_initPosition(position) {
+Piece::Piece(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
+    : m_bCampRed(bCampRed), m_eIdentity(eIdentity), m_initPosition(position), m_curPosition(position) {
   m_eState = EnumState::live;
   m_name = nullptr;
 }
 
 Piece::Piece() {
-  m_eCamp = EnumCamp::unknown;
+  m_bCampRed = true;
   m_eIdentity = EnumIdentity::unknown;
   m_eState = EnumState::live;
   m_name = nullptr;
@@ -19,8 +19,8 @@ Piece::Piece() {
 
 Piece::~Piece() = default;
 
-void Piece::setCamp(enum EnumCamp eCamp) {
-  m_eCamp = eCamp;
+void Piece::setCampRed(bool bCampRed) {
+  m_bCampRed = bCampRed;
 }
 
 void Piece::setRole(enum EnumIdentity eIdentity) {
@@ -35,8 +35,8 @@ void Piece::setCurPosition(const Position &position) {
   m_curPosition = position;
 }
 
-enum EnumCamp Piece::camp() const {
-  return m_eCamp;
+bool Piece::campRed() const {
+  return m_bCampRed;
 }
 
 enum EnumIdentity Piece::role() const {
@@ -66,7 +66,7 @@ bool Piece::updatePosition(short rank, short file, std::vector<Piece *> &vecPiec
       continue;
 
     if (rank == pos.rank() && file == pos.file()) {
-      if (pPiece->camp() == m_eCamp)
+      if (pPiece->campRed() == m_bCampRed)
         return false;
       else {
         pPiece->setStatus(EnumState::dead);
@@ -86,17 +86,24 @@ void Piece::setCurPosition(short rank, short file) {
 }
 
 bool Piece::operator==(const Piece &p) const {
-  if (p.m_eCamp == m_eCamp &&
+  if (p.m_bCampRed == m_bCampRed &&
       p.m_eIdentity == m_eIdentity &&
-      p.m_initPosition == m_initPosition)
+      p.m_initPosition == m_initPosition) {
     return true;
+  }
 
   return false;
 }
 
+
 const char *Piece::name() const {
   return m_name;
 }
+
+bool Piece::checking(Chess &chess) {
+  return false;
+}
+
 
 
 

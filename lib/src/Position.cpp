@@ -39,10 +39,16 @@ bool Position::operator==(const Position &p) const {
   return (m_rank == p.rank()) && (m_file == p.file());
 }
 
+Position Position::operator+(const Position &p) const {
+  return {static_cast<short>(m_rank + p.rank()),
+          static_cast<short>(m_file + p.file())};
+}
+
 void Position::setPosition(short rank, short file) {
   m_rank = rank;
   m_file = file;
 }
+
 
 
 
