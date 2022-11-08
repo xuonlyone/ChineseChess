@@ -49,7 +49,11 @@ bool PiecePawn::checking(Chess &chess) {
   Piece *pPieceKing = chess.getKing(!m_bCampRed);
   Position posKing = pPieceKing->curPosition();
 
-  if (abs(posKing.rank() - m_curPosition.rank() > 1) || abs(posKing.file() - m_curPosition.file() > 1))
+  printf("[%s %s] %s %s at (%d %d), %s %s at (%d %d)\n", __FILE__, __func__,
+         pPieceKing->camp(), pPieceKing->name(), posKing.rank(), posKing.file(),
+         m_camp, m_name, m_curPosition.rank(), m_curPosition.file());
+
+  if (abs(posKing.rank() - m_curPosition.rank()) > 1 || abs(posKing.file() - m_curPosition.file()) > 1)
     return false;
 
   if (m_initPosition.rank() == 3 && m_curPosition.rank() > posKing.rank()) {
@@ -60,5 +64,6 @@ bool PiecePawn::checking(Chess &chess) {
     return false;
   }
 
+  printf("[%s %s], %s %s is checking.\n", __FILE__, __func__, m_camp, m_name);
   return true;
 }

@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+#include <iostream>
 #include "../include/PieceKnight.h"
 
 PieceKnight::PieceKnight(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
@@ -75,5 +76,7 @@ bool PieceKnight::checking(Chess &chess) {
     if (pPieceLame != nullptr)
       return false;
   }
+
+  printf("[%s %s], %s %s is checking.\n", __FILE__, __func__, m_camp, m_name);
   return true;
 }

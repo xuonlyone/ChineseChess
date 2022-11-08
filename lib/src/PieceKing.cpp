@@ -9,7 +9,6 @@
 PieceKing::PieceKing(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
     : Piece(bCampRed, eIdentity, position) {
   m_name = (m_bCampRed ? "帥" : "將");
-  std::cout << m_name << std::endl;
 }
 
 
@@ -67,6 +66,7 @@ bool PieceKing::checking(Chess &chess) {
       return false;
   }
 
+  printf("[%s %s], the king faces each other.\n", __FILE__, __func__);
   return true;
 }
 

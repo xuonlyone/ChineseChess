@@ -2,11 +2,13 @@
 // Created by xu on 2022/9/20.
 //
 
+#include <iostream>
 #include "../include/Piece.h"
 
 Piece::Piece(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
     : m_bCampRed(bCampRed), m_eIdentity(eIdentity), m_initPosition(position), m_curPosition(position) {
   m_eState = EnumState::live;
+  m_camp = (m_bCampRed ? "red" : "black");
   m_name = nullptr;
 }
 
@@ -57,21 +59,24 @@ void Piece::reset() {
 }
 
 bool Piece::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
-  if (rank < 0 || rank > 10 || file < 0 || file > 9)
+  if (rank < 0 || rank > 10 || file < 0 || file > 9) {
+    printf("[%s %s], out of range, rank: %d file: %d\n", __FILE__, __func__, rank, file);
     return false;
-
+  }
   for (auto pPiece: vecPiece) {
     Position pos = pPiece->curPosition();
     if (pPiece->state() != EnumState::live)
       continue;
 
     if (rank == pos.rank() && file == pos.file()) {
-      if (pPiece->campRed() == m_bCampRed)
+      if (pPiece->campRed() == m_bCampRed) {
+        printf("[%s %s], %s takes this position, can't move here.\n", __FILE__, __func__, pPiece->name());
         return false;
-      else {
+      } else {
         pPiece->setStatus(EnumState::dead);
         pPiece->setCurPosition(-rank, -file);
         m_curPosition.setPosition(rank, file);
+        printf("[%s %s], %s is captured.\n", __FILE__, __func__, pPiece->name());
         return true;
       }
     }
@@ -102,6 +107,10 @@ const char *Piece::name() const {
 
 bool Piece::checking(Chess &chess) {
   return false;
+}
+
+const char *Piece::camp() const {
+  return m_camp;
 }
 
 

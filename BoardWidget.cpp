@@ -8,6 +8,7 @@
 #include <QDrag>
 #include <QMouseEvent>
 #include <iostream>
+#include <QMessageBox>
 #include "BoardWidget.h"
 
 BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
@@ -147,8 +148,11 @@ void BoardWidget::dropEvent(QDropEvent *event) {
                     m_origin + rankDst * m_spacing - pixmap.rect().center().y());
       newIcon->show();
       newIcon->setAttribute(Qt::WA_DeleteOnClose);
-    }
 
+      if (m_Chess.checking()){
+        QMessageBox::warning(this, "checking", "checking");
+      }
+    }
 
 
     if (event->source() == this) {

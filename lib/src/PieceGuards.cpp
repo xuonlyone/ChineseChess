@@ -8,7 +8,7 @@
 
 PieceGuards::PieceGuards(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
     : Piece(bCampRed, eIdentity, position) {
-  m_name = (m_bCampRed? "仕" : "士");
+  m_name = (m_bCampRed ? "仕" : "士");
 }
 
 

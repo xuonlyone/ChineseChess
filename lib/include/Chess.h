@@ -27,7 +27,7 @@ public:
 
   Piece *getKing(bool bCampRed);
 
-  bool Checking();
+  bool checking();
 
   std::vector<Piece *> &getAllPieces();
 

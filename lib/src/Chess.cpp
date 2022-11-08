@@ -108,28 +108,27 @@ Chess::~Chess() {
 
 
 Piece *Chess::getPiece(short rank, short file) {
-  std::cout << __func__ << std::endl;
-  if (rank < 0 || rank >= 10 || file < 0 || file >= 9)
+  if (rank < 0 || rank >= 10 || file < 0 || file >= 9) {
+    printf("[%s %s], out of range, rank: %d file: %d\n", __FILE__, __func__, rank, file);
     return nullptr;
+  }
 
   for (auto pPiece: m_vecPiece) {
     if (pPiece == nullptr) {
-      std::cout << " null piece " << std::endl;
       continue;
     }
 
     Position pos = pPiece->curPosition();
-    std::cout << pPiece->name() << "111 " << pos.rank() << " " << pos.file() << std::endl;
     if (pPiece->state() != EnumState::live)
       continue;
 
     if (rank == pos.rank() && file == pos.file()) {
-      std::cout << pPiece->name() << " " << pos.rank() << " " << pos.file() << std::endl;
+      printf("[%s %s], get piece %s in position (%d, %d)\n", __FILE__, __func__, pPiece->name(), rank, file);
       return pPiece;
     }
   }
 
-  std::cout << " no piece " << std::endl;
+  printf("[%s %s], no piece in position (%d, %d)\n", __FILE__, __func__, rank, file);
   return nullptr;
 }
 
@@ -152,9 +151,17 @@ void Chess::reset() {
 
 bool Chess::movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst) {
   Piece *pPiece = getPiece(rankSrc, fileSrc);
-  std::cout << "name: " << pPiece->name() << " campRed: " << (int) pPiece->campRed() << " " << m_redTurn << std::endl;
-  if (pPiece->campRed() ^ m_redTurn)
+  if (pPiece == nullptr)
     return false;
+
+  printf("[%s %s], %s %s moves from position (%d, %d) to (%d, %d)\n", __FILE__, __func__,
+         pPiece->camp(), pPiece->name(), rankSrc, fileSrc, rankDst, fileDst);
+
+  if (pPiece->campRed() ^ m_redTurn) {
+    printf("[%s %s], it's %s turn, the camp of %s %s is not match.\n", __FILE__, __func__,
+           m_redTurn ? "red" : "black", pPiece->camp(), pPiece->name());
+    return false;
+  }
 
   bool ret = pPiece->updatePosition(rankDst, fileDst, m_vecPiece);
   if (ret)
@@ -170,6 +177,7 @@ std::vector<Piece *> &Chess::getAllPieces() {
 
 
 Piece *Chess::getKing(bool bCampRed) {
+  printf("[%s %s], get %s king.\n", __FILE__, __func__, bCampRed ? "red" : "black");
   for (auto pPiece: m_vecPiece) {
     if (pPiece->campRed() == bCampRed && pPiece->role() == EnumIdentity::king)
       return pPiece;
@@ -178,16 +186,17 @@ Piece *Chess::getKing(bool bCampRed) {
 }
 
 
-bool Chess::Checking() {
-  bool bCampRed = m_redTurn;
-  if (m_redTurn) {
+bool Chess::checking() {
+  printf("[%s %s], checking the king situation.\n", __FILE__, __func__);
+  for (auto pPiece : m_vecPiece) {
+    if (pPiece->campRed() != m_redTurn || pPiece->state() != EnumState::live)
+      continue;
 
-    for (auto pPiece : m_vecPiece) {
-      if (pPiece->role() != EnumIdentity::king || pPiece->campRed() != bCampRed)
-        continue;
-
-
+    if (pPiece->checking(*this)) {
+      printf("[%s %s], %s camp is checking.\n", __FILE__, __func__, m_redTurn ? "red" : "black");
+      return true;
     }
   }
+
   return false;
 }

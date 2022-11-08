@@ -2,6 +2,7 @@
 // Created by xu on 2022/9/20.
 //
 
+#include <iostream>
 #include "../include/PieceCannon.h"
 
 PieceCannon::PieceCannon(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
@@ -86,8 +87,13 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
 
 
 bool PieceCannon::checking(Chess &chess) {
+  printf("[%s %s], checking the king situation.\n", __FILE__, __func__);
   Piece *pPieceKing = chess.getKing(!m_bCampRed);
   Position posKing = pPieceKing->curPosition();
+
+  printf("[%s %s] %s %s at (%d %d), %s %s at (%d %d)\n", __FILE__, __func__,
+         pPieceKing->camp(), pPieceKing->name(), posKing.rank(), posKing.file(),
+         m_camp, m_name, m_curPosition.rank(), m_curPosition.file());
 
   if (posKing.rank() == m_curPosition.rank()) {
     short maxPos = std::max(posKing.file(), m_curPosition.file());
@@ -101,6 +107,11 @@ bool PieceCannon::checking(Chess &chess) {
     }
     if (count != 1)
       return false;
+    else {
+      printf("[%s %s], %s %s is checking at rank %d.\n", __FILE__, __func__,
+             m_camp, m_name, m_curPosition.rank());
+      return true;
+    }
   }
 
   if (posKing.file() == m_curPosition.file()) {
@@ -115,7 +126,12 @@ bool PieceCannon::checking(Chess &chess) {
     }
     if (count != 1)
       return false;
+    else {
+      printf("[%s %s], %s %s is checking at file %d.\n", __FILE__, __func__,
+             m_camp, m_name, m_curPosition.file());
+      return true;
+    }
   }
 
-  return true;
+  return false;
 }

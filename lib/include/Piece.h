@@ -58,6 +58,8 @@ public:
 
   bool campRed() const;
 
+  const char* camp() const;
+
   enum EnumIdentity role() const;
 
   enum EnumState state() const;
@@ -74,6 +76,7 @@ protected:
   Position m_initPosition;
   Position m_curPosition;
   const char *m_name;
+  const char *m_camp;
 };
 
 
