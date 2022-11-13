@@ -50,9 +50,9 @@ public:
 
   void reset();
 
-  void setCurPosition(short rank, short file);
+  void setCurPosition(int8_t rank, int8_t file);
 
-  virtual bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece);
+  virtual bool updatePosition(int8_t rank, int8_t file, Chess &chess);
 
   const char *name() const;
 
@@ -75,6 +75,7 @@ protected:
   enum EnumState m_eState;
   Position m_initPosition;
   Position m_curPosition;
+  Position m_prePosition;
   const char *m_name;
   const char *m_camp;
 };

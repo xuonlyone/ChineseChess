@@ -6,9 +6,11 @@
 #define CHINESE_CHESS_POSITION_H
 
 
+#include <cstdint>
+
 class Position {
 public:
-  Position(short rank, short file);
+  Position(int8_t rank, int8_t file);
 
   Position();
 
@@ -18,19 +20,21 @@ public:
 
   Position operator+(const Position &p) const;
 
-  short rank() const;
+  int8_t rank() const;
 
-  short file() const;
+  int8_t file() const;
 
-  void setRank(short rank);
+  void setRank(int8_t rank);
 
-  void setFile(short file);
+  void setFile(int8_t file);
 
-  void setPosition(short rank, short file);
+  void setPosition(int8_t rank, int8_t file);
+
+  void setPosition(const Position &p);
 
 private:
-  short m_rank;  //横线
-  short m_file;  //直线
+  int8_t m_rank;  //横线
+  int8_t m_file;  //直线
 
 };
 

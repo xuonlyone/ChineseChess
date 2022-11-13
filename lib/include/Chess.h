@@ -19,20 +19,24 @@ public:
 
   void reset();
 
-  bool movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst);
+  bool movePiece(int8_t rankSrc, int8_t fileSrc, int8_t rankDst, int8_t fileDst);
 
-  Piece *getPiece(short rank, short file);
+  Piece *getPiece(int8_t rank, int8_t file);
 
   Piece *getPiece(const Position& pos);
 
   Piece *getKing(bool bCampRed);
 
-  bool checking();
+  bool checking(bool bRedTurn);
 
   std::vector<Piece *> &getAllPieces();
 
+  void switchTurn();
+
+  bool redTurn();
+
 private:
-  const static short PIECE_COUNT = 16;
+  const static int8_t PIECE_COUNT = 16;
   Board m_board;
 
   bool m_redTurn;

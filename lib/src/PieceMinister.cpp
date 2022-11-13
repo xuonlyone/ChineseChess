@@ -5,7 +5,7 @@
 #include <cmath>
 #include "../include/PieceMinister.h"
 
-PieceMinister::PieceMinister(bool bCampRed, enum EnumIdentity eIdentity, const Position& position)
+PieceMinister::PieceMinister(bool bCampRed, enum EnumIdentity eIdentity, const Position &position)
     : Piece(bCampRed, eIdentity, position) {
   m_name = (m_bCampRed ? "相" : "象");
 }
@@ -21,15 +21,16 @@ PieceMinister::PieceMinister(bool bCampRed, enum EnumIdentity eIdentity, const P
  * @param vecPiece
  * @return
  */
-bool PieceMinister::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool PieceMinister::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   if (abs(rank - m_curPosition.rank()) != 2 || abs(file - m_curPosition.file()) != 2)
     return false;
 
   if (abs(m_initPosition.rank() - rank) > 4) //can not cross river
     return false;
 
-  auto lameRank = static_cast<short>((rank + m_curPosition.rank()) / 2);
-  auto lameFile = static_cast<short>((file + m_curPosition.file()) / 2);
+  std::vector<Piece *> &vecPiece = chess.getAllPieces();
+  auto lameRank = (rank + m_curPosition.rank()) / 2;
+  auto lameFile = (file + m_curPosition.file()) / 2;
   Position posLame(lameRank, lameFile);
   for (auto pPiece: vecPiece) {
     if (pPiece->state() != EnumState::live)
@@ -43,5 +44,5 @@ bool PieceMinister::updatePosition(short rank, short file, std::vector<Piece *> 
       return false;
   }
 
-  return Piece::updatePosition(rank, file, vecPiece);
+  return Piece::updatePosition(rank, file, chess);
 }

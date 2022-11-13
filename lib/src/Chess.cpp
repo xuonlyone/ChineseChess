@@ -107,7 +107,7 @@ Chess::~Chess() {
 }
 
 
-Piece *Chess::getPiece(short rank, short file) {
+Piece *Chess::getPiece(int8_t rank, int8_t file) {
   if (rank < 0 || rank >= 10 || file < 0 || file >= 9) {
     printf("[%s %s], out of range, rank: %d file: %d\n", __FILE__, __func__, rank, file);
     return nullptr;
@@ -128,7 +128,7 @@ Piece *Chess::getPiece(short rank, short file) {
     }
   }
 
-  printf("[%s %s], no piece in position (%d, %d)\n", __FILE__, __func__, rank, file);
+  //printf("[%s %s], no piece in position (%d, %d)\n", __FILE__, __func__, rank, file);
   return nullptr;
 }
 
@@ -149,13 +149,13 @@ void Chess::reset() {
 }
 
 
-bool Chess::movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst) {
+bool Chess::movePiece(int8_t rankSrc, int8_t fileSrc, int8_t rankDst, int8_t fileDst) {
   Piece *pPiece = getPiece(rankSrc, fileSrc);
   if (pPiece == nullptr)
     return false;
 
-  printf("[%s %s], %s %s moves from position (%d, %d) to (%d, %d)\n", __FILE__, __func__,
-         pPiece->camp(), pPiece->name(), rankSrc, fileSrc, rankDst, fileDst);
+  printf("[%s %s], %s's turn, %s %s moves from position (%d, %d) to (%d, %d)\n", __FILE__, __func__,
+         m_redTurn ? "red" : "black", pPiece->camp(), pPiece->name(), rankSrc, fileSrc, rankDst, fileDst);
 
   if (pPiece->campRed() ^ m_redTurn) {
     printf("[%s %s], it's %s turn, the camp of %s %s is not match.\n", __FILE__, __func__,
@@ -163,10 +163,7 @@ bool Chess::movePiece(short rankSrc, short fileSrc, short rankDst, short fileDst
     return false;
   }
 
-  bool ret = pPiece->updatePosition(rankDst, fileDst, m_vecPiece);
-  if (ret)
-    m_redTurn = !m_redTurn;
-
+  bool ret = pPiece->updatePosition(rankDst, fileDst, *this);
   return ret;
 }
 
@@ -186,10 +183,10 @@ Piece *Chess::getKing(bool bCampRed) {
 }
 
 
-bool Chess::checking() {
+bool Chess::checking(bool bRedTurn) {
   printf("[%s %s], checking the king situation.\n", __FILE__, __func__);
   for (auto pPiece : m_vecPiece) {
-    if (pPiece->campRed() != m_redTurn || pPiece->state() != EnumState::live)
+    if (pPiece->campRed() != bRedTurn || pPiece->state() != EnumState::live)
       continue;
 
     if (pPiece->checking(*this)) {
@@ -199,4 +196,12 @@ bool Chess::checking() {
   }
 
   return false;
+}
+
+void Chess::switchTurn() {
+  m_redTurn = !m_redTurn;
+}
+
+bool Chess::redTurn() {
+  return m_redTurn;
 }

@@ -21,13 +21,14 @@ PieceKnight::PieceKnight(bool bCampRed, enum EnumIdentity eIdentity, const Posit
  * @param vecPiece
  * @return
  */
-bool PieceKnight::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool PieceKnight::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   unsigned val1 = abs(rank - m_curPosition.rank());
   unsigned val2 = abs(file - m_curPosition.file());
 
   if (!((val1 + val2 == 3) && (val1 != 0) && (val2 != 0)))
     return false;
 
+  std::vector<Piece *> &vecPiece = chess.getAllPieces();
   //consider the lame knight
   if (val1 > val2) {
     auto lame = (rank + m_curPosition.rank()) / 2;
@@ -51,7 +52,7 @@ bool PieceKnight::updatePosition(short rank, short file, std::vector<Piece *> &v
     }
   }
 
-  return Piece::updatePosition(rank, file, vecPiece);
+  return Piece::updatePosition(rank, file, chess);
 }
 
 bool PieceKnight::checking(Chess &chess) {

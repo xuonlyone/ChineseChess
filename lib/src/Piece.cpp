@@ -58,11 +58,13 @@ void Piece::reset() {
   m_eState = EnumState::live;
 }
 
-bool Piece::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool Piece::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   if (rank < 0 || rank > 10 || file < 0 || file > 9) {
     printf("[%s %s], out of range, rank: %d file: %d\n", __FILE__, __func__, rank, file);
     return false;
   }
+
+  std::vector<Piece *> &vecPiece = chess.getAllPieces();
   for (auto pPiece: vecPiece) {
     Position pos = pPiece->curPosition();
     if (pPiece->state() != EnumState::live)
@@ -82,11 +84,12 @@ bool Piece::updatePosition(short rank, short file, std::vector<Piece *> &vecPiec
     }
   }
 
+  m_prePosition.setPosition(m_curPosition);
   m_curPosition.setPosition(rank, file);
   return true;
 }
 
-void Piece::setCurPosition(short rank, short file) {
+void Piece::setCurPosition(int8_t rank, int8_t file) {
   m_curPosition.setPosition(rank, file);
 }
 

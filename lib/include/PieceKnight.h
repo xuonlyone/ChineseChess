@@ -13,7 +13,7 @@ public:
 
   ~PieceKnight() override = default;
 
-  bool updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) override;
+  bool updatePosition(int8_t rank, int8_t file, Chess &chess) override;
 
   bool checking(Chess &chess) override;
 };

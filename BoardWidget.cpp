@@ -131,8 +131,9 @@ void BoardWidget::dropEvent(QDropEvent *event) {
     int fileSrc = (m_eventPoint.x() - m_origin + pixmap.rect().center().x()) / m_spacing;
     int rankDst = (event->position().toPoint().y() - m_origin + pixmap.rect().center().y()) / m_spacing;
     int fileDst = (event->position().toPoint().x() - m_origin + pixmap.rect().center().x()) / m_spacing;
-    std::cout << "point origin " << rankSrc << ", " << fileSrc << std::endl;
-    std::cout << "point target " << rankDst << ", " << fileDst << std::endl;
+
+    printf("[%s %s]point origin (%d, %d), target (%d, %d)\n", __FILE__, __func__,
+           rankSrc, fileSrc, rankDst, fileDst);
     bool bMove = m_Chess.movePiece(rankSrc, fileSrc, rankDst, fileDst);
     if (bMove) {
       auto *child = dynamic_cast<QLabel *>(childAt(m_origin + fileDst * m_spacing,
@@ -149,14 +150,21 @@ void BoardWidget::dropEvent(QDropEvent *event) {
       newIcon->show();
       newIcon->setAttribute(Qt::WA_DeleteOnClose);
 
-      if (m_Chess.checking()){
+      if (m_Chess.checking(m_Chess.redTurn())) {
         QMessageBox::warning(this, "checking", "checking");
+      }
+
+      if (m_Chess.checking(!m_Chess.redTurn())){
+        //todo, to roll back previous status of all pieces
+
+        //bMove = false;
       }
     }
 
 
     if (event->source() == this) {
       if (bMove) {
+        m_Chess.switchTurn();
         event->setDropAction(Qt::MoveAction);
         event->accept();
       } else {

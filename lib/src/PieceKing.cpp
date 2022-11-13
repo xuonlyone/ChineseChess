@@ -20,7 +20,7 @@ PieceKing::PieceKing(bool bCampRed, enum EnumIdentity eIdentity, const Position 
  * @param vecPiece
  * @return
  */
-bool PieceKing::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool PieceKing::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   if (abs(rank - m_curPosition.rank()) + abs(file - m_curPosition.file()) != 1)
     return false;
 
@@ -29,7 +29,7 @@ bool PieceKing::updatePosition(short rank, short file, std::vector<Piece *> &vec
   if (abs(file - 4) > 1)
     return false;
 
-  return Piece::updatePosition(rank, file, vecPiece);
+  return Piece::updatePosition(rank, file, chess);
 }
 
 
@@ -57,10 +57,10 @@ bool PieceKing::checking(Chess &chess) {
   if (posKing.file() != m_curPosition.file())
     return false;
 
-  short maxPos = std::max(posKing.rank(), m_curPosition.rank());
-  short minPos = std::min(posKing.rank(), m_curPosition.rank());
+  int8_t maxPos = std::max(posKing.rank(), m_curPosition.rank());
+  int8_t minPos = std::min(posKing.rank(), m_curPosition.rank());
 
-  for (short i = minPos + 1; i < maxPos; ++i) {
+  for (int8_t i = minPos + 1; i < maxPos; ++i) {
     Piece *pPiece = chess.getPiece(posKing.rank(), i);
     if (pPiece != nullptr)
       return false;
@@ -71,9 +71,9 @@ bool PieceKing::checking(Chess &chess) {
 }
 
 //bool PieceKing::checkedByKing(Chess &chess) {
-//  short rank = m_curPosition.rank();
+//  int8_t rank = m_curPosition.rank();
 //  if (rank < 3) {
-//    for (short i = rank + 1; i < 10; ++i) {
+//    for (int8_t i = rank + 1; i < 10; ++i) {
 //      Piece *pPiece = chess.getPiece(i, m_curPosition.file());
 //      if (pPiece == nullptr)
 //        continue;
@@ -88,7 +88,7 @@ bool PieceKing::checking(Chess &chess) {
 //    }
 //  }
 //  if (rank > 6) {
-//    for (short i = 1; i < rank; ++i) {
+//    for (int8_t i = 1; i < rank; ++i) {
 //      Piece *pPiece = chess.getPiece(rank - i, m_curPosition.file());
 //      if (pPiece == nullptr)
 //        continue;
@@ -107,10 +107,10 @@ bool PieceKing::checking(Chess &chess) {
 //
 //
 //bool PieceKing::checkedByRook(Chess &chess) {
-//  short rank = m_curPosition.rank();
-//  short file = m_curPosition.file();
+//  int8_t rank = m_curPosition.rank();
+//  int8_t file = m_curPosition.file();
 //
-//  for (short i = 0; i < rank; ++i) {
+//  for (int8_t i = 0; i < rank; ++i) {
 //    Piece *pPiece = chess.getPiece(rank - i - 1, file);
 //    if (pPiece == nullptr)
 //      continue;
@@ -124,7 +124,7 @@ bool PieceKing::checking(Chess &chess) {
 //      return false;
 //  }
 //
-//  for (short i = rank; i < 10; ++i) {
+//  for (int8_t i = rank; i < 10; ++i) {
 //    Piece *pPiece = chess.getPiece(i + 1, file);
 //    if (pPiece == nullptr)
 //      continue;
@@ -138,7 +138,7 @@ bool PieceKing::checking(Chess &chess) {
 //      return false;
 //  }
 //
-//  for (short i = 0; i < file; ++i) {
+//  for (int8_t i = 0; i < file; ++i) {
 //    Piece *pPiece = chess.getPiece(rank, file - i - 1);
 //    if (pPiece == nullptr)
 //      continue;
@@ -152,7 +152,7 @@ bool PieceKing::checking(Chess &chess) {
 //      return false;
 //  }
 //
-//  for (short i = file; i < 9; ++i) {
+//  for (int8_t i = file; i < 9; ++i) {
 //    Piece *pPiece = chess.getPiece(rank, i + 1);
 //    if (pPiece == nullptr)
 //      continue;
@@ -171,11 +171,11 @@ bool PieceKing::checking(Chess &chess) {
 //
 //
 //bool PieceKing::checkedByCannon(Chess &chess) {
-//  short rank = m_curPosition.rank();
-//  short file = m_curPosition.file();
+//  int8_t rank = m_curPosition.rank();
+//  int8_t file = m_curPosition.file();
 //
 //  int count = 0;
-//  for (short i = 0; i < rank; ++i) {
+//  for (int8_t i = 0; i < rank; ++i) {
 //    Piece *pPiece = chess.getPiece(rank - i - 1, file);
 //    if (pPiece == nullptr)
 //      continue;
@@ -195,7 +195,7 @@ bool PieceKing::checking(Chess &chess) {
 //  }
 //
 //  count = 0;
-//  for (short i = rank; i < 10; ++i) {
+//  for (int8_t i = rank; i < 10; ++i) {
 //    Piece *pPiece = chess.getPiece(i + 1, file);
 //    if (pPiece == nullptr)
 //      continue;
@@ -215,7 +215,7 @@ bool PieceKing::checking(Chess &chess) {
 //  }
 //
 //  count = 0;
-//  for (short i = 0; i < file; ++i) {
+//  for (int8_t i = 0; i < file; ++i) {
 //    Piece *pPiece = chess.getPiece(rank, file - i - 1);
 //    if (pPiece == nullptr)
 //      continue;
@@ -235,7 +235,7 @@ bool PieceKing::checking(Chess &chess) {
 //  }
 //
 //  count = 0;
-//  for (short i = file; i < 9; ++i) {
+//  for (int8_t i = file; i < 9; ++i) {
 //    Piece *pPiece = chess.getPiece(rank, i + 1);
 //    if (pPiece == nullptr)
 //      continue;
@@ -259,8 +259,8 @@ bool PieceKing::checking(Chess &chess) {
 //
 //
 //bool PieceKing::checkedByPawn(Chess &chess) {
-//  short rank = m_curPosition.rank();
-//  short file = m_curPosition.file();
+//  int8_t rank = m_curPosition.rank();
+//  int8_t file = m_curPosition.file();
 //  Piece *pPiece = chess.getPiece(rank, file + 1);
 //  if (pPiece != nullptr &&
 //      pPiece->role() == EnumIdentity::pawn &&
@@ -300,8 +300,8 @@ bool PieceKing::checking(Chess &chess) {
 //
 //
 //bool PieceKing::checkedByKnight(Chess &chess) {
-//  short rank = m_curPosition.rank();
-//  short file = m_curPosition.file();
+//  int8_t rank = m_curPosition.rank();
+//  int8_t file = m_curPosition.file();
 //  Position posCheck[] = {{-1, -2},
 //                         {-1, 2},
 //                         {1,  -2},

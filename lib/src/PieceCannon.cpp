@@ -19,7 +19,7 @@ PieceCannon::PieceCannon(bool bCampRed, enum EnumIdentity eIdentity, const Posit
  * @param vecPiece
  * @return
  */
-bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool PieceCannon::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   if (!((rank == m_curPosition.rank() && file != m_curPosition.file()) ||
         (rank != m_curPosition.rank() && file == m_curPosition.file())))
     return false;
@@ -27,6 +27,8 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
   unsigned rackNumber = 0;
   bool hasEnemy = false;
   Piece *pEnemyPiece = nullptr;
+
+  std::vector<Piece *> &vecPiece = chess.getAllPieces();
   for (auto pPiece: vecPiece) {
     if (pPiece == nullptr)
       continue;
@@ -75,9 +77,11 @@ bool PieceCannon::updatePosition(short rank, short file, std::vector<Piece *> &v
   if (hasEnemy && rackNumber == 1) {
     pEnemyPiece->setStatus(EnumState::dead);
     pEnemyPiece->setCurPosition(-rank, -file);
+    m_prePosition.setPosition(m_curPosition);
     m_curPosition.setPosition(rank, file);
     return true;
   } else if (!hasEnemy && rackNumber == 0) {
+    m_prePosition.setPosition(m_curPosition);
     m_curPosition.setPosition(rank, file);
     return true;
   } else {
@@ -96,11 +100,11 @@ bool PieceCannon::checking(Chess &chess) {
          m_camp, m_name, m_curPosition.rank(), m_curPosition.file());
 
   if (posKing.rank() == m_curPosition.rank()) {
-    short maxPos = std::max(posKing.file(), m_curPosition.file());
-    short minPos = std::min(posKing.file(), m_curPosition.file());
+    int8_t maxPos = std::max(posKing.file(), m_curPosition.file());
+    int8_t minPos = std::min(posKing.file(), m_curPosition.file());
 
     int count = 0;
-    for (short i = minPos + 1; i < maxPos; ++i) {
+    for (int8_t i = minPos + 1; i < maxPos; ++i) {
       Piece *pPiece = chess.getPiece(posKing.rank(), i);
       if (pPiece != nullptr)
         ++count;
@@ -115,11 +119,11 @@ bool PieceCannon::checking(Chess &chess) {
   }
 
   if (posKing.file() == m_curPosition.file()) {
-    short maxPos = std::max(posKing.rank(), m_curPosition.rank());
-    short minPos = std::min(posKing.rank(), m_curPosition.rank());
+    int8_t maxPos = std::max(posKing.rank(), m_curPosition.rank());
+    int8_t minPos = std::min(posKing.rank(), m_curPosition.rank());
 
     int count = 0;
-    for (short i = minPos + 1; i < maxPos; ++i) {
+    for (int8_t i = minPos + 1; i < maxPos; ++i) {
       Piece *pPiece = chess.getPiece(i, posKing.file());
       if (pPiece != nullptr)
         ++count;

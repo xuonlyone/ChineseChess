@@ -21,7 +21,7 @@ PiecePawn::PiecePawn(bool bCampRed, enum EnumIdentity eIdentity, const Position 
  * @param vecPiece
  * @return
  */
-bool PiecePawn::updatePosition(short rank, short file, std::vector<Piece *> &vecPiece) {
+bool PiecePawn::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   if (m_initPosition.rank() == 3 && (rank < m_initPosition.rank() || rank < m_curPosition.rank()))
     return false;
 
@@ -41,7 +41,7 @@ bool PiecePawn::updatePosition(short rank, short file, std::vector<Piece *> &vec
       return false;
   }
 
-  return Piece::updatePosition(rank, file, vecPiece);
+  return Piece::updatePosition(rank, file, chess);
 }
 
 
