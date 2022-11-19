@@ -8,10 +8,11 @@
 #include <vector>
 #include "Board.h"
 #include "Piece.h"
+#include "IOriginator.h"
 
 class Piece;
 
-class Chess {
+class Chess : public IOriginator {
 public:
   Chess();
 
@@ -23,7 +24,7 @@ public:
 
   Piece *getPiece(int8_t rank, int8_t file);
 
-  Piece *getPiece(const Position& pos);
+  Piece *getPiece(const Position &pos);
 
   Piece *getKing(bool bCampRed);
 
@@ -34,6 +35,10 @@ public:
   void switchTurn();
 
   bool redTurn();
+
+  virtual CMemento setMemento();
+
+  virtual void createMemento(CMemento m);
 
 private:
   const static int8_t PIECE_COUNT = 16;

@@ -116,6 +116,11 @@ const char *Piece::camp() const {
   return m_camp;
 }
 
+void Piece::setData(bool bCampRed, const Position &position) {
+  m_bCampRed = bCampRed;
+  m_curPosition = position;
+}
+
 
 
 

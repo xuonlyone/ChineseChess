@@ -5,13 +5,16 @@
 #ifndef CHINESE_CHESS_IORIGINATOR_H
 #define CHINESE_CHESS_IORIGINATOR_H
 
+#include "CMemento.h"
+
+class CMemento;
 
 class IOriginator {
 public:
-  virtual void setState() =0;
-  virtual void getState() = 0;
+  virtual CMemento setMemento() = 0;
 
+  virtual void createMemento(CMemento m) = 0;
 };
 
 
-#endif //CHINESECHESS_IORIGINATOR_H
+#endif //CHINESE_CHESS_IORIGINATOR_H

@@ -154,7 +154,7 @@ bool Chess::movePiece(int8_t rankSrc, int8_t fileSrc, int8_t rankDst, int8_t fil
   if (pPiece == nullptr)
     return false;
 
-  printf("[%s %s], %s's turn, %s %s moves from position (%d, %d) to (%d, %d)\n", __FILE__, __func__,
+  printf("[%s %s], %s's turn, %s %s moves from position (%d, %d) to (%d, %d).\n", __FILE__, __func__,
          m_redTurn ? "red" : "black", pPiece->camp(), pPiece->name(), rankSrc, fileSrc, rankDst, fileDst);
 
   if (pPiece->campRed() ^ m_redTurn) {
@@ -190,7 +190,8 @@ bool Chess::checking(bool bRedTurn) {
       continue;
 
     if (pPiece->checking(*this)) {
-      printf("[%s %s], %s camp is checking.\n", __FILE__, __func__, m_redTurn ? "red" : "black");
+      printf("[%s %s], %s's turn, %s camp is checking.\n", __FILE__, __func__,
+             m_redTurn ? "red" : "black", bRedTurn ? "red" : "black");
       return true;
     }
   }
@@ -200,8 +201,37 @@ bool Chess::checking(bool bRedTurn) {
 
 void Chess::switchTurn() {
   m_redTurn = !m_redTurn;
+  printf("[%s %s], switch to turn %s.\n", __FILE__, __func__, m_redTurn ? "red" : "black");
 }
 
 bool Chess::redTurn() {
   return m_redTurn;
+}
+
+CMemento Chess::setMemento() {
+  std::vector<Piece> vecPiece;
+  for (auto &pPiece : m_vecPiece) {
+    printf("[%s %s]%s%s set memento position(%d %d).\n", __FILE__, __func__,
+           pPiece->camp(),
+           pPiece->name(),
+           pPiece->curPosition().rank(),
+           pPiece->curPosition().file());
+    vecPiece.push_back(*pPiece);
+  }
+  CMemento m(m_redTurn, vecPiece);
+  return m;
+}
+
+void Chess::createMemento(CMemento m) {
+  m_redTurn = m.getStateTurn();
+  std::vector<Piece> vecPiece = m.getStatePiece();
+  for (size_t i = 0; i < vecPiece.size(); ++i) {
+    m_vecPiece[i]->setData(vecPiece[i].campRed(), vecPiece[i].curPosition());
+    printf("[%s %s]%s%s reset to position(%d %d).\n", __FILE__, __func__,
+           m_vecPiece[i]->camp(),
+           m_vecPiece[i]->name(),
+           m_vecPiece[i]->curPosition().rank(),
+           m_vecPiece[i]->curPosition().file());
+  }
+  printf("[%s %s]rest to %s's turn.\n", __FILE__, __func__, m_redTurn ? "red" : "black");
 }

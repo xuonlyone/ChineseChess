@@ -25,7 +25,9 @@ add_executable(${PROJECT_NAME}
         lib/src/Board.cpp
         lib/src/Chess.cpp
         BoardWidget.cpp
-        lib/src/IOriginator.cpp lib/include/IOriginator.h lib/src/CMemento.cpp lib/include/CMemento.h)
+        lib/src/CMemento.cpp
+        lib/src/CCaretaker.cpp
+        lib/include/IOriginator.h)
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "

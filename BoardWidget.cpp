@@ -40,10 +40,7 @@ BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
     //imageLabel->setAlignment(Qt::AlignCenter);
     imageLabel->move(m_origin + pos.file() * m_spacing - image.rect().center().x(),
                      m_origin + pos.rank() * m_spacing - image.rect().center().y());
-
-    std::cout << "piece" << pPiece->name() << " " << imageLabel << std::endl;
   }
-
 
   uiFormBoard.setupUi(this);
 }
@@ -127,37 +124,39 @@ void BoardWidget::dropEvent(QDropEvent *event) {
     QPoint offset;
     dataStream >> pixmap >> offset;
 
-    int rankSrc = (m_eventPoint.y() - m_origin + pixmap.rect().center().y()) / m_spacing;
-    int fileSrc = (m_eventPoint.x() - m_origin + pixmap.rect().center().x()) / m_spacing;
-    int rankDst = (event->position().toPoint().y() - m_origin + pixmap.rect().center().y()) / m_spacing;
-    int fileDst = (event->position().toPoint().x() - m_origin + pixmap.rect().center().x()) / m_spacing;
+    int8_t rankSrc = static_cast<int8_t>((m_eventPoint.y() - m_origin + pixmap.rect().center().y()) / m_spacing);
+    int8_t fileSrc = static_cast<int8_t>((m_eventPoint.x() - m_origin + pixmap.rect().center().x()) / m_spacing);
+    int8_t rankDst = static_cast<int8_t>((event->position().toPoint().y() - m_origin + pixmap.rect().center().y()) /
+                                         m_spacing);
+    int8_t fileDst = static_cast<int8_t>((event->position().toPoint().x() - m_origin + pixmap.rect().center().x()) /
+                                         m_spacing);
 
     printf("[%s %s]point origin (%d, %d), target (%d, %d)\n", __FILE__, __func__,
            rankSrc, fileSrc, rankDst, fileDst);
     bool bMove = m_Chess.movePiece(rankSrc, fileSrc, rankDst, fileDst);
     if (bMove) {
-      auto *child = dynamic_cast<QLabel *>(childAt(m_origin + fileDst * m_spacing,
-                                                   m_origin + rankDst * m_spacing));
-      std::cout << child << std::endl;
-      if (child) {
-        child->clear();
-      }
+      if (m_Chess.checking(!m_Chess.redTurn())) {
+        m_Chess.createMemento(m_caretaker.getMemento());
+        bMove = false;
+        QMessageBox::warning(this, "checking", "can't move");
+      } else {
+        auto *child = dynamic_cast<QLabel *>(childAt(m_origin + fileDst * m_spacing,
+                                                     m_origin + rankDst * m_spacing));
+        std::cout << child << std::endl;
+        if (child) {
+          child->clear();
+        }
 
-      auto *newIcon = new QLabel(this);
-      newIcon->setPixmap(pixmap);
-      newIcon->move(m_origin + fileDst * m_spacing - pixmap.rect().center().x(),
-                    m_origin + rankDst * m_spacing - pixmap.rect().center().y());
-      newIcon->show();
-      newIcon->setAttribute(Qt::WA_DeleteOnClose);
+        auto *newIcon = new QLabel(this);
+        newIcon->setPixmap(pixmap);
+        newIcon->move(m_origin + fileDst * m_spacing - pixmap.rect().center().x(),
+                      m_origin + rankDst * m_spacing - pixmap.rect().center().y());
+        newIcon->show();
+        newIcon->setAttribute(Qt::WA_DeleteOnClose);
 
-      if (m_Chess.checking(m_Chess.redTurn())) {
-        QMessageBox::warning(this, "checking", "checking");
-      }
-
-      if (m_Chess.checking(!m_Chess.redTurn())){
-        //todo, to roll back previous status of all pieces
-
-        //bMove = false;
+        if (m_Chess.checking(m_Chess.redTurn())) {
+          QMessageBox::warning(this, "checking", "checking");
+        }
       }
     }
 
@@ -165,15 +164,18 @@ void BoardWidget::dropEvent(QDropEvent *event) {
     if (event->source() == this) {
       if (bMove) {
         m_Chess.switchTurn();
+        m_caretaker.setMemento(m_Chess.setMemento());
         event->setDropAction(Qt::MoveAction);
         event->accept();
+        printf("[%s %s]accept the drop action.\n", __FILE__, __func__);
       } else {
         event->setDropAction(Qt::IgnoreAction);
         event->ignore();
+        printf("[%s %s]ignore the drop action.\n", __FILE__, __func__);
       }
-
     } else {
       event->acceptProposedAction();
+      printf("[%s %s]accept the proposed action.\n", __FILE__, __func__);
     }
   } else {
     event->ignore();

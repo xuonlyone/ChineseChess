@@ -7,6 +7,7 @@
 
 #include "ui/ui_ui_Board.h"
 #include "lib/include/Chess.h"
+#include "lib/include/CCaretaker.h"
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
 class QDropEvent;
@@ -29,6 +30,7 @@ private:
   int m_origin;
   int m_spacing;
   QPoint m_eventPoint;
+  CCaretaker m_caretaker;
 
   void paintEvent(QPaintEvent *);
 };

@@ -7,9 +7,25 @@
 
 #include "Chess.h"
 
+class Piece;
+
 class CMemento {
 public:
-  CMemento();
+  CMemento(bool redTurn, std::vector<Piece> vecPiece);
+
+  CMemento(const CMemento &m);
+
+  ~CMemento();
+
+  bool getStateTurn();
+
+  std::vector<Piece> getStatePiece();
+
+  void setState(bool redTurn, std::vector<Piece> vecPiece);
+
+private:
+  bool m_redTurn;
+  std::vector<Piece> m_vecPiece;
 
 };
 

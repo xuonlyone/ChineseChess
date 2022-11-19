@@ -33,7 +33,6 @@ bool PiecePawn::updatePosition(int8_t rank, int8_t file, Chess &chess) {
 
   // The pawn can only step forward. After crossing the river, it can step forward or on both sides, one step at a time.
   if (abs(rank - m_initPosition.rank()) <= 1) {
-    std::cout << "crossed the river" << m_initPosition.rank() << std::endl;
     if (file != m_curPosition.file() || file != m_initPosition.file())
       return false;
   } else {

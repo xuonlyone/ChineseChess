@@ -48,6 +48,8 @@ public:
 
   void setStatus(enum EnumState eState);
 
+  void setData(bool bCampRed, const Position &position);
+
   void reset();
 
   void setCurPosition(int8_t rank, int8_t file);
@@ -58,7 +60,7 @@ public:
 
   bool campRed() const;
 
-  const char* camp() const;
+  const char *camp() const;
 
   enum EnumIdentity role() const;
 
