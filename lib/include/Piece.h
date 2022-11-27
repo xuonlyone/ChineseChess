@@ -48,7 +48,7 @@ public:
 
   void setStatus(enum EnumState eState);
 
-  void setData(bool bCampRed, const Position &position);
+  void setData(bool bCampRed, EnumState state, const Position &position);
 
   void reset();
 

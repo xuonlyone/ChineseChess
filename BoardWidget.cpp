@@ -41,8 +41,11 @@ BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
     imageLabel->move(m_origin + pos.file() * m_spacing - image.rect().center().x(),
                      m_origin + pos.rank() * m_spacing - image.rect().center().y());
   }
-
   uiFormBoard.setupUi(this);
+
+  m_timer = new QTimer();
+  connect(m_timer, SIGNAL(timeout()), this, SLOT(hideMsg()));
+  uiFormBoard.framePrompt->hide(); //初始将frame隐藏，就将frame中的控件隐藏了
 }
 
 
@@ -87,7 +90,10 @@ void BoardWidget::paintEvent(QPaintEvent *) {
 
 }
 
-BoardWidget::~BoardWidget() = default;
+BoardWidget::~BoardWidget() {
+  delete m_timer;
+  m_timer = nullptr;
+}
 
 void BoardWidget::dragEnterEvent(QDragEnterEvent *event) {
   if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
@@ -138,11 +144,11 @@ void BoardWidget::dropEvent(QDropEvent *event) {
       if (m_Chess.checking(!m_Chess.redTurn())) {
         m_Chess.createMemento(m_caretaker.getMemento());
         bMove = false;
-        QMessageBox::warning(this, "checking", "can't move");
+        showMsg(QString::fromLocal8Bit("请重新选择").toStdString().c_str());
+
       } else {
         auto *child = dynamic_cast<QLabel *>(childAt(m_origin + fileDst * m_spacing,
                                                      m_origin + rankDst * m_spacing));
-        std::cout << child << std::endl;
         if (child) {
           child->clear();
         }
@@ -155,7 +161,7 @@ void BoardWidget::dropEvent(QDropEvent *event) {
         newIcon->setAttribute(Qt::WA_DeleteOnClose);
 
         if (m_Chess.checking(m_Chess.redTurn())) {
-          QMessageBox::warning(this, "checking", "checking");
+          showMsg(QString::fromLocal8Bit("将军").toStdString().c_str());
         }
       }
     }
@@ -221,4 +227,15 @@ void BoardWidget::mousePressEvent(QMouseEvent *event) {
     child->show();
     child->setPixmap(pixmap);
   }
+}
+
+void BoardWidget::hideMsg() {
+  uiFormBoard.framePrompt->hide();
+  m_timer->stop();
+}
+
+void BoardWidget::showMsg(const char *msg) {
+  uiFormBoard.framePrompt->show();
+  uiFormBoard.labelPrompt->setText(QCoreApplication::translate("Form_Board", msg, nullptr));
+  m_timer->start(1500);
 }

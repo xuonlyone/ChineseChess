@@ -115,12 +115,16 @@ Piece *Chess::getPiece(int8_t rank, int8_t file) {
 
   for (auto pPiece: m_vecPiece) {
     if (pPiece == nullptr) {
+      printf("[%s %s], piece nullptr\n", __FILE__, __func__);
       continue;
     }
 
     Position pos = pPiece->curPosition();
-    if (pPiece->state() != EnumState::live)
+    if (pPiece->state() != EnumState::live) {
+      printf("[%s %s], %s %s had been killed.\n", __FILE__, __func__,
+             pPiece->camp(), pPiece->name());
       continue;
+    }
 
     if (rank == pos.rank() && file == pos.file()) {
       printf("[%s %s], get piece %s in position (%d, %d)\n", __FILE__, __func__, pPiece->name(), rank, file);
@@ -211,11 +215,12 @@ bool Chess::redTurn() {
 CMemento Chess::setMemento() {
   std::vector<Piece> vecPiece;
   for (auto &pPiece : m_vecPiece) {
-    printf("[%s %s]%s%s set memento position(%d %d).\n", __FILE__, __func__,
+    printf("[%s %s]%s%s set memento position(%d %d), state %d.\n", __FILE__, __func__,
            pPiece->camp(),
            pPiece->name(),
            pPiece->curPosition().rank(),
-           pPiece->curPosition().file());
+           pPiece->curPosition().file(),
+           pPiece->state());
     vecPiece.push_back(*pPiece);
   }
   CMemento m(m_redTurn, vecPiece);
@@ -226,12 +231,13 @@ void Chess::createMemento(CMemento m) {
   m_redTurn = m.getStateTurn();
   std::vector<Piece> vecPiece = m.getStatePiece();
   for (size_t i = 0; i < vecPiece.size(); ++i) {
-    m_vecPiece[i]->setData(vecPiece[i].campRed(), vecPiece[i].curPosition());
-    printf("[%s %s]%s%s reset to position(%d %d).\n", __FILE__, __func__,
+    m_vecPiece[i]->setData(vecPiece[i].campRed(), vecPiece[i].state(), vecPiece[i].curPosition());
+    printf("[%s %s]%s%s reset to position(%d %d), state %d.\n", __FILE__, __func__,
            m_vecPiece[i]->camp(),
            m_vecPiece[i]->name(),
            m_vecPiece[i]->curPosition().rank(),
-           m_vecPiece[i]->curPosition().file());
+           m_vecPiece[i]->curPosition().file(),
+           m_vecPiece[i]->state());
   }
   printf("[%s %s]rest to %s's turn.\n", __FILE__, __func__, m_redTurn ? "red" : "black");
 }

@@ -17,7 +17,7 @@ CCaretaker::~CCaretaker() {
 CMemento CCaretaker::getMemento() {
   printf("[%s %s]get the last turn data\n", __FILE__, __func__);
   CMemento memento(m_stackMemento.top());
-  m_stackMemento.pop();
+  //m_stackMemento.pop();
   return memento;
 }
 

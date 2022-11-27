@@ -102,6 +102,8 @@ bool PieceCannon::checking(Chess &chess) {
   if (posKing.rank() == m_curPosition.rank()) {
     int8_t maxPos = std::max(posKing.file(), m_curPosition.file());
     int8_t minPos = std::min(posKing.file(), m_curPosition.file());
+    printf("[%s %s] check position from file %d to %d\n", __FILE__, __func__,
+           minPos, maxPos);
 
     int count = 0;
     for (int8_t i = minPos + 1; i < maxPos; ++i) {
@@ -121,6 +123,8 @@ bool PieceCannon::checking(Chess &chess) {
   if (posKing.file() == m_curPosition.file()) {
     int8_t maxPos = std::max(posKing.rank(), m_curPosition.rank());
     int8_t minPos = std::min(posKing.rank(), m_curPosition.rank());
+    printf("[%s %s] check position from rank %d to %d\n", __FILE__, __func__,
+           minPos, maxPos);
 
     int count = 0;
     for (int8_t i = minPos + 1; i < maxPos; ++i) {

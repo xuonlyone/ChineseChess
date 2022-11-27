@@ -72,7 +72,7 @@ bool Piece::updatePosition(int8_t rank, int8_t file, Chess &chess) {
 
     if (rank == pos.rank() && file == pos.file()) {
       if (pPiece->campRed() == m_bCampRed) {
-        printf("[%s %s], %s takes this position, can't move here.\n", __FILE__, __func__, pPiece->name());
+        printf("[%s %s], %s occupy this position, can't move here.\n", __FILE__, __func__, pPiece->name());
         return false;
       } else {
         pPiece->setStatus(EnumState::dead);
@@ -116,9 +116,10 @@ const char *Piece::camp() const {
   return m_camp;
 }
 
-void Piece::setData(bool bCampRed, const Position &position) {
+void Piece::setData(bool bCampRed, EnumState state, const Position &position) {
   m_bCampRed = bCampRed;
   m_curPosition = position;
+  m_eState = state;
 }
 
 
