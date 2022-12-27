@@ -32,16 +32,6 @@ bool PieceKing::updatePosition(int8_t rank, int8_t file, Chess &chess) {
   return Piece::updatePosition(rank, file, chess);
 }
 
-
-
-//bool PieceKing::checked(Chess &chess) {
-//  return (checkedByPawn(chess) ||
-//          checkedByCannon(chess) ||
-//          checkedByKnight(chess) ||
-//          checkedByRook(chess) ||
-//          checkedByKing(chess));
-//}
-
 /**
  * The two Kings in the board must never be on the same file (vertical line)
  * without any pieces in between them. A move that puts the two Kings in such
@@ -49,19 +39,24 @@ bool PieceKing::updatePosition(int8_t rank, int8_t file, Chess &chess) {
  * @param vecPiece
  * @return
  */
-
 bool PieceKing::checking(Chess &chess) {
   Piece *pPieceKing = chess.getKing(!m_bCampRed);
   Position posKing = pPieceKing->curPosition();
 
+  printf("[%s %s], enemy king pos[%d, %d], my pos[%d, %d]\n",
+         __FILE__, __func__, pPieceKing->curPosition().rank(),
+         pPieceKing->curPosition().file(),
+         m_curPosition.rank(), m_curPosition.file());
   if (posKing.file() != m_curPosition.file())
     return false;
 
-  int8_t maxPos = std::max(posKing.rank(), m_curPosition.rank());
-  int8_t minPos = std::min(posKing.rank(), m_curPosition.rank());
+  int8_t maxRank = std::max(posKing.rank(), m_curPosition.rank());
+  int8_t minRank = std::min(posKing.rank(), m_curPosition.rank());
 
-  for (int8_t i = minPos + 1; i < maxPos; ++i) {
-    Piece *pPiece = chess.getPiece(posKing.rank(), i);
+  printf("[%s %s], check whether there is a piece in rank (%d, %d)\n",
+         __FILE__, __func__, minRank, maxRank);
+  for (int8_t i = minRank + 1; i < maxRank; ++i) {
+    Piece *pPiece = chess.getPiece(i, posKing.file());
     if (pPiece != nullptr)
       return false;
   }

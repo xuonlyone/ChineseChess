@@ -63,6 +63,9 @@ bool PiecePawn::checking(Chess &chess) {
     return false;
   }
 
+  if (abs(m_curPosition.rank() - posKing.rank() + abs(m_curPosition.file() - posKing.file()) != 1))
+    return false;
+
   printf("[%s %s], %s %s is checking.\n", __FILE__, __func__, m_camp, m_name);
   return true;
 }

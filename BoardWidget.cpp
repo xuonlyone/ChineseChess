@@ -8,12 +8,11 @@
 #include <QDrag>
 #include <QMouseEvent>
 #include <iostream>
-#include <QMessageBox>
 #include "BoardWidget.h"
 
 BoardWidget::BoardWidget(QWidget *parent) : QWidget(parent) {
   m_origin = 60;
-  m_spacing = 90;
+  m_spacing = 95;
 
   setMinimumSize(20, 20);
   setAcceptDrops(true);
@@ -189,6 +188,7 @@ void BoardWidget::dropEvent(QDropEvent *event) {
 }
 
 void BoardWidget::mousePressEvent(QMouseEvent *event) {
+  printf("\n================================\n");
   QLabel *child = dynamic_cast<QLabel *>(childAt(event->position().toPoint()));
   if (!child)
     return;
